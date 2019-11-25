@@ -2,6 +2,98 @@
 ejs : partials
 **************
 
+5. Templates
+=========
+
+Générer des fichiers HTML spécifiques pour chaque requête. Pour cela on a du choix : http://expressjs.com/en/guide/using-template-engines.html et on utilisera http://ejs.co :
+
+Il faut commencer par l'installer et le mettre en dépendance : :code:`yarn add ejs`
+
+.. code-block:: javascript
+
+    app.set('view engine', 'ejs')
+
+
+Commençons par transformer nos fichiers HTML en templates :
+    * Les templates se trouvent par défaut dans le répertoire :code:`views`.
+    * On renomme nos fichiers .html en .ejs,
+    * On utilise la méthode de rendu plutôt que de charger directement les fichiers : https://www.npmjs.com/package/ejs.
+
+.. code-block:: javascript
+
+    var http = require('http')
+
+    var express = require('express')
+    var app = express()
+
+	app.set('view engine', 'ejs')
+
+    app.use("/static", express.static(__dirname + '/static'))
+
+	app.get('/', (request, response) => {
+	        response.render("index")
+	})
+
+	app.get('/contact', (request, response) => {
+	    response.render("contact")
+	})
+
+    app.use(function (req, res, next) {
+        res.status(404).render("404")
+    })
+
+    app.listen(3000);
+    console.log("c'est parti")
+
+
+passage de paramètres
+---------------------
+
+.. todo:: Passage de paramètres
+
+
+partials
+--------
+
+
+Ajoutons maintenant un élément qui va être sur toutes les pages :
+    * On crée une navbar toute simple, que l'on place dans un sous-répertoire de :code:`views`,  :code:`partials`,
+    * On l'inclut dans nos templates en ajoutant dans notre fichier ejs la ligne :code:`<% include partials/navbar.ejs %>` Ici, cela pourra être la première ligne du body.
+
+
+.. code-block:: html
+    :caption: navbar.ejs
+
+	<style>
+	    nav > ul {
+	        font-size: .5em;
+	        text-align: left;
+	    }
+		nav > ul > li {
+			display: inline;
+
+		}
+	</style>
+
+	<nav>
+	  <ul>
+	  	<li><a href="/">Maison</a></li>
+	    <li><a href="/contact">contact</a></li>
+	  </ul>
+	</nav>
+
+
+
+
+
+build
+=====
+
+Placez votre code sur l'ovh.
+
+.. note:: On fera attention aux fichiers statiques. Où doivent-ils être ?
+
+
 
 
 On recommence un petit site avec ce qu'on a appris la dernière fois. On ajoute juste un formulaire pour mettre son nom, son prénom et permettre d'envoyer un petit compliment aux créateurs du site.

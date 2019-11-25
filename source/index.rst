@@ -44,7 +44,7 @@ back
 
     2_2_node
     2_3_express
-
+    2_4_ejs_partials
 
 
 données
@@ -67,8 +67,7 @@ données
     
     tests_selenium_mocha
 
-    cours_3_2_2_cookies    
-    ejs_partials
+    cours_3_2_2_cookies
 
     cours_4_1_identification
 
