@@ -2,35 +2,42 @@
 Express
 *******
 
-Node vient souvent avec express (http://expressjs.com), un framework permettant d'en tirer le meilleur parti.
+.. _Express.js : http://expressjs.com
+
+Node vient souvent avec `Express.js_`, un framework permettant d'en tirer le meilleur parti.
 
 .. note:: On va copier notre site actuel pour le modifier avec Express.
 
 Gestion de packages
 ===================
 
-Node vient avec son célèbre installeur npm : https://www.npmjs.com. Il existe des alternatives, comme  :code:`yarn` par exemple, que nous allons utiliser ici (voir partie front)
- 
-.. todo:: faire une référence avec la patie front
+.. _npm : https://www.npmjs.com
 
- 
+Pour installer les packages Node, on peut utiliser npm_ (node package manager). Aujourd'hui il existe des alternatives,
+comme  :code:`yarn`, par exemple, que nous allons utiliser ici.
+    * Sous W10 : :code:`scoop install yarn`
+    * Sous linux : :code:`apt-get yarn`
+    * Sous OSX : :code:`brew install node`
+
 :code:`yarn` va installer les package pour nous : 
 
 * on commence par initialier le projet par :code:`yarn init` 
 * puis :code:`yarn add express`.
 
-Il a rajouté un répertoire :code:`node_module` avec plein d'autres répertoires à l'intérieur. Ce sont les dépendances du framework express. ainsi qu'un fichier de configuration :code:`config.json` Tout installer à la main aurait été infaisable. 
+Il a rajouté un répertoire :code:`node_module` avec plein d'autres répertoires à l'intérieur. Ce sont les dépendances du
+framework express. ainsi qu'un fichier de configuration :code:`config.json` Tout installer à la main aurait été infaisable.
 
 Route Express
 =============
 
-On a juste remplacé les routes basiques par celles offertes par Express dans :code:`app.js`.
+Express propose des méthodes pour gérer les routes de notre appli. On utilise les méthodes *get* de HTTP. Les autres
+existent également bien sûr : http://expressjs.com/fr/starter/basic-routing.html.
 
-On utilise les méthodes *get* de HTTP. Les autres existent également bien sûr : http://expressjs.com/fr/starter/basic-routing.html.
-
+créez un nouveau fichier **app.js** qui sera le point d'entrée de votre application. Insérez le code suivant qui reprend
+les routes précédement créés.
 
 .. code-block:: javascript 
-    :caption: index.js
+    :caption: app.js
 
     const http = require('http') 
 
