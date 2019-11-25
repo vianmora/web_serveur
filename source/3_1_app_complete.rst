@@ -6,6 +6,7 @@ Squelette d'une application complète
 initialisation
 ==============
 
+.. Training :: Pour s'entraîner durant ce chapite (+ formulaires) nous allons créer une appli pour créer sa propre liste de Noël ! Vous pourrez trouver la correction pas-à-pas sur ce lien : https://github.com/pisabel-git/Liste_de_Noel
 
 Avec Webstorm, créez un projet **Node.js Express App** avec comme paramètres :
     * :code:`yarn` comme package manager
@@ -36,7 +37,6 @@ Essayons de comprendre comment tout ça fonctionne :
 .. note:: plusieurs variables d'environnement en même temps :code:`DEBUG=untitled3:server PORT=8080 yarn run start` 
 
 .. note:: si vous avez installé tree, vous pouvez taper :code:`tree -f | grep -v "node_modules/.*"` pour avoir l'arborescence jolie.
-
 
 ejs
 === 
