@@ -285,106 +285,22 @@ Il faut ensuite inclure la base de données dans la fonction GET('/') pour l'inc
 Les partials
 ============
 
-On a dupliqué du code (la navbar et les imports). C'est très dangereux. Pour corriger cela, on va utiliser des partials
-qui seront importés depuis le dossier :file:`views/partials`
+Avec cette manière de faire nous avons simplifié le code de l'index. Seulement, si nous souhaitons créer des composants plus complexes, le code va rapidement devenir lourd.
+Pour éviter cela, on va utiliser un partials, qui sera notre composant "type", élément de la liste: :file:`item.ejs`
+Il sera importés depuis le dossier :file:`views/partials`
 
-Vous allez faire 3 partials :
+.. note:: Cet élément type pourrait être utilisé dans différents templates si on en avait envie
 
-  * :file:`navbar.ejs`
-  * :file:`head_imports.ejs`
-  * :file:`js_imports.ejs`
+.. todo:: Créer le partials affichant le nom de l'item et son prix, et ajoutez-y un bouton qui permettra plus tard de supprimer l'élément
 
-Ils seront placés dans tous les ejs à part le 404 qui est spécial (il ne fait PAS partie du site).
-
-
-:file:`views/partials/navbar.ejs` :
+Dans `index.ejs`, on utilisera la nomenclature suivante :
 
 .. code-block:: html
 
-  <nav>
-      <div class="nav-wrapper">
-          <a href="/" class="brand-logo left">Da site</a>
-          <ul id="nav-mobile" class="right">
-              <li>
-                  <a href="commentaires">Commentaires</a>
-              </li>
-          </ul>
-      </div>
-  </nav>
+    <%- include('partials/item.ejs', {value: data.item, price:data.price}); %>
 
+.. note:: Vous trouverez la solution dans le `tag: v.1.2`
 
-:file:`views/partials/head_css_import.ejs` :
-
-.. code-block:: html
-
-  <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-  />
-
-  <link rel="stylesheet" type="text/css" href="/static/main.css">
-
-
-:file:`views/partials/js_import.ejs` :
-
-.. code-block:: html
-
-  <!--Import jQuery before materialize.js-->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-
-
-Ce qui donne pour :file:`home.ejs` :
-
-.. code-block:: text
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Maison page</title>
-      <% include partials/head_css_import.ejs %>
-  </head>
-
-  <body>
-      <% include partials/navbar.ejs %>
-
-      <h1>Le site</h1>
-      <p>Il va y avoir des données (plein).</p>
-
-      <% include partials/js_import.ejs %>
-  </body>
-
-  </html>
-
-
-et pour :file:`commentaires.ejs` :
-
-.. code-block:: text
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Commentaires</title>
-
-      <% include partials/head_css_import.ejs %>
-  </head>
-
-  <body>
-
-      <% include partials/navbar.ejs %>
-
-      <ul>
-          <li>Si j'ai quoi ? affirmatif.</li>
-          <li>Et quoi d'autre ? No comment.</li>
-      </ul>
-
-      <% include partials/js_import.ejs %>
-  </body>
-
-  </html>
 
 
 Refactor
