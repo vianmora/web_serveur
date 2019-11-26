@@ -181,6 +181,7 @@ Essayons de créer ensemble une barre de navigation qui devra apparaitre dans le
 =========
 
 Pour la dernière étape de ce cours, mettez votre premier serveur en production sur l'ovh !
+pour cela, utilisez git
 
 .. note:: On fera attention aux fichiers statiques. Où doivent-ils être ?
 
