@@ -54,6 +54,7 @@ données
 .. toctree::
     :maxdepth: 2
 
+    3_0_Projet_liste_noël
     3_1_app_complete
     3_2_formulaires
     3_3_crud

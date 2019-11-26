@@ -6,7 +6,8 @@ Squelette d'une application complète
 initialisation
 ==============
 
-.. Training :: Pour s'entraîner durant ce chapite (+ formulaires) nous allons créer une appli pour créer sa propre liste de Noël ! Vous pourrez trouver la correction pas-à-pas sur ce lien : https://github.com/pisabel-git/Liste_de_Noel
+.. Training:: Pour s'entraîner durant ce chapite (+ formulaires) nous allons créer une appli pour créer sa propre
+liste de Noël ! Vous pourrez trouver la correction pas-à-pas sur ce lien : https://github.com/pisabel-git/Liste_de_Noel
 
 Avec Webstorm, créez un projet **Node.js Express App** avec comme paramètres :
     * :code:`yarn` comme package manager
