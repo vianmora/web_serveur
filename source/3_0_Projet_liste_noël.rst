@@ -12,12 +12,11 @@ Projet Liste de Noël
 
 Présentation du projet
 ======================
+C'est bientôt Noël ! Il faut donc faire sa liste de cadeaux ! Créons donc une appli qui nous permettra de compléter cette liste !
 
+.. note:: Retrouvez la correction pas-à-pas sur ce repository: https://github.com/pisabel-git/Liste_de_Noel
 
-On recommence un petit site avec ce qu'on a appris la dernière fois. On ajoute juste un formulaire pour mettre son nom,
-son prénom et permettre d'envoyer un petit compliment aux créateurs du site.
-
-#. :code:`npm init` (on va appeler notre fichier de départ *server*),
+#. :code:`npm init` (on va appeler notre fichier de départ *app*),
 #. :code:`npm install express --save`,
 #. :code:`npm install ejs --save`,
 #. création des dossiers annexes:
@@ -42,7 +41,7 @@ On doit obtenir l'architecture de dossiers suivante (en utilisant la commande tr
 
 
 
-server.js
+app.js
 ^^^^^^^^^
 
 C'est la base du serveur :
@@ -58,10 +57,10 @@ C'est la base du serveur :
 
 
   app.listen(8080);
-  console.log("c'est parti");
+  console.log("Appli lancée");
 
 
-Regardons si ça marche... On peut aller sur `<http://localhost:8080>`_ et voir si notre assets fonctionne :
+Regardons si ça marche... Lançons l'application `$ node app.js`, allons sur `<http://localhost:8080>`_ et voir si notre assets fonctionne :
 `<http://localhost:8080/static/404.jpg>`_
 
 .. note:: on a dissocié les URL (static) du dossier effectif (./assets/)
@@ -99,7 +98,7 @@ On place notre :file:`404.ejs` :
   </html>
 
 
-Et on ajoute la route dans le :file:`server.js` (à la toute fin, juste avant le lancement de l'appli. Si on a rien trouvé avant, c'est que c'est un 404) :
+Et on ajoute la route dans le :file:`app.js` (à la toute fin, juste avant le lancement de l'appli. Si on a rien trouvé avant, c'est que c'est un 404) :
 
 .. code-block:: javascript
 
@@ -161,7 +160,7 @@ Et dans le :file:`main.css` on a ajouté, outre le comportement général d'une 
   }
 
 
-home.ejs
+index.ejs
 ^^^^^^^^
 
 On ajoute maintenant notre première page, le home (ou la fame).
@@ -172,13 +171,13 @@ On va mettre les éléments dans le répertoire :file:`views`. On commence par a
 .. code-block:: javascript
 
   app.get('/', (request, response) => {
-          response.render("home")
+          response.render("index")
   })
 
 
 
 
-Puis on crée notre vue :file:`home.ejs` dans le répertoire :file:`views`.
+Puis on crée notre vue :file:`index.ejs` dans le répertoire :file:`views`.
 der
 .. code-block:: html
 
@@ -195,127 +194,92 @@ der
       </body>
   </html>
 
+.. todo :: L'appli est initialisée ! Nous allons pouvoir commencer à créer notre Liste au Père Noël. Si vous avez des soucis avec l'installation, jetez un coup d'oeil au :code:`tag: v.0` du repository
 
-
-Navbar
+Liste Dynamique
 ======
 
-Ajout de `<http://materializecss.com>`_ pour que ce soit plus joli ! Par exemple la navbar : `<http://materializecss.com/navbar.html>`_
+Remplacons le code de `main.css`
 
-.. note :: on peut faire plein de trucs chouette avec materialize ! Mais c'est encore très (trop) instable. Pour une solution (très) stable vous pouvez aussi regarder du côté de `<http://getbootstrap.com>`_ (qui à l'heure que je tape ces lignes est en beta de la v4) (et qui à l'heure où je corrige ces lignes, en est à la v4 tout court)
+.. code-block:: css
 
+    .app
+    {
+        margin-right: 10%;
+        margin-left: 10%;
+    }
 
+    h1
+    {
+        font-size: 48px;
+    }
 
-
-On va installer ces bibliothèques dans :file:`assets` puisque ce sont des dépendances front. On crée donc un nouveau projet npm pour gérer les dépendances front, et on y ajoute nos bibliothèques.
-
-.. code-block:: sh
-
-  emma:app $ cd assets
-  emma:assets $ npm init
-  emma:assets $ npm install materialize-css --save
-
-On peut maintenant importer la bibliothèque dans :file:`home.ejs` :
+Ainsi que le code de `index.ejs` (nous utiliserons la bibliothèque bootstrap pour simplifier la partie rendu visuel)
 
 .. code-block:: html
 
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Maison page</title>
-
-      <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-      />
-
-      <link rel="stylesheet" type="text/css" href="/static/main.css">
-  </head>
-
-  <body>
-      <nav>
-          <div class="nav-wrapper">
-              <a href="/" class="brand-logo left">Da site</a>
-              <ul id="nav-mobile" class="right">
-                  <li>
-                      <a href="commentaires">Commentaires</a>
-                  </li>
-              </ul>
-          </div>
-      </nav>
-
-      <h1>Le site</h1>
-      <p>Il va y avoir des données (plein).</p>
-
-      <!--Import jQuery before materialize.js-->
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-  </body>
-
-  </html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Liste de Noël</title>
+        <link rel="stylesheet" type="text/css" href="/static/main.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
 
 
-Commentaires (placeholders)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    <div class="app">
+        <h1 style="margin-top: 5%">Liste au Père Noël</h1>
 
-La navbar contient un lien vers une route "commentaires". On placera notre formulaire là-bas plus tard. Pour l'instant, faisons juste en sorte que la route soit reconnue.
+        <br/>
 
-On ajoute ainsi la route dans :file:`server.js`, juste après la route "/" et avant le "404".
+        <form style="display: flex;justify-content: space-around" method="post">
+            <input type="text" name="item" class="form-control" placeholder="Nouvel Element" required/>
+            <input type="text" name="price" class="form-control" placeholder="Prix" required/>
+            <button type="submit" class="btn btn-success" style="margin-left: 2%">Ajouter</button>
+
+        </form>
+
+        <br/>
+
+        <ul class="list-group">
+            <li class="list-group-item">Item 1</li>
+            <li class="list-group-item">Item 2</li>
+            <li class="list-group-item">Item 3</li>
+            <li class="list-group-item">Item 4</li>
+            <li class="list-group-item">Item 5</li>
+        </ul>
+
+        <br/>
+
+        <div>
+            <button  class="btn btn-danger" type="button">Tout supprimer</button>
+        </div>
+    </div>
+
+    </body>
+    </html>
+
+Nous avons désormais la structure visuelle de notre appli !
+Nous pouvons voir une liste statique des "items". Rendons maintenant cette liste dynamique avec EJS, Express et une "Base de données" qu'on va initialiser :
+
+`app.js` (en début de code)
 
 .. code-block:: javascript
 
-  app.get('/commentaires', (request, response) => {
-      response.render("commentaires")
-  })
+    // Notre BDD de base pour notre liste de Noël
+    var DataBase = [{item:'Portable', price:'250'},{item:'Ferrari', price:'25000'},{item:'Chocolat', price:'4.20'}];
 
-Et le fichier :file:`commentaires.ejs` :
+.. note:: Notre "Base de données" est une ArrayList en JavaScript. Chaque element de cette liste a deux arguments : "item" et "price"
 
-.. code-block:: html
+Il faut ensuite inclure la base de données dans la fonction GET('/') pour l'inclure en paramètre de `index.ejs`
 
-  <html>
+.. code-block:: javascript
+    app.get('/', (request, response) => {
+        res.render('index',{liste: DataBase})
+    });
 
-  <head>
-      <meta charset="utf-8" />
-      <title>Commentaires</title>
-
-      <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-      />
-
-      <link rel="stylesheet" type="text/css" href="/static/main.css">
-  </head>
-
-  <body>
-
-      <nav>
-          <div class="nav-wrapper">
-              <a href="/" class="brand-logo left">Da site</a>
-              <ul id="nav-mobile" class="right">
-                  <li>
-                      <a href="commentaires">Commentaires</a>
-                  </li>
-              </ul>
-          </div>
-      </nav>
-
-      <ul>
-          <li>Si j'ai quoi ? affirmatif.</li>
-          <li>Et quoi d'autre ? No comment.</li>
-      </ul>
-
-      <!--Import jQuery before materialize.js-->
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-  </body>
-
-  </html>
-
-
-.. note :: on voit que les listes n'ont pas de puces. En regardant les propriétés css, on voit que c'est materialize qui a modifié leur comportement.  C'est pourquoi l'ordre des import des fichiers css et js est important.
+.. todo:: Réaliser une liste dynamique avec le langage EJS prenant en compte la base de données écrite précédemment. On utilisera la méthode des ArrayList `.forEach(function(element)) { ... }`.
+.. note:: Vous trouverez la solution dans le `tag: v.1.1`
 
 
 Les partials
