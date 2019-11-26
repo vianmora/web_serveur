@@ -302,10 +302,8 @@ Dans `index.ejs`, on utilisera la nomenclature suivante :
 .. note:: Vous trouverez la solution dans le `tag: v.1.2`
 
 
-
 Refactor
 ========
-
 
 Refactor en séparant les routes du serveur
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -317,44 +315,191 @@ Ici, on va séparer ce qui est de l'ordre de la création du serveur et les rout
 .. note :: cela va aussi nous permettre de voir comment javascript gère les modules.  `<https://www.sitepoint.com/understanding-module-exports-exports-node-js/>`_
 
 
-On crée un fichier :file:`app.js` contenant nos routes :
+On crée un fichier :file:`router.js` contenant toutes les réponses à nos requêtes (On y mettra aussi notre BDD pour simplifier la partie javascript):
 
 .. code-block:: js
 
-    var express = require('express')
-    var app = express()
+    // Notre BDD de base pour notre liste de Noël
+    var DataBase = [{item:'Portable', price:'250'},{item:'Ferrari', price:'25000'},{item:'Chocolat', price:'4.20'}];
 
-    app.set('view engine', 'ejs')
+    var express = require('express');
+    var app = express();
 
+    app.set('view engine', 'ejs');
 
-    app.use("/static", express.static(__dirname + '/assets'))
+    app.use("/static", express.static(__dirname + '/assets'));
 
-
-    app.get('/', (request, response) => {
-        response.render("home")
-    })
-
-    app.get('/commentaires', (request, response) => {
-        response.render("commentaires")
-    })
+    // Requete GET
+    app.get('/', (req, res) => {
+        res.render("index",{liste: DataBase})
+    });
 
 
     // 404 aucune interception
     app.use(function (req, res, next) {
         res.status(404).render("404")
         // logger.info("404 for: " + req.originalUrl); Le logger n'a pas ete defini, on en parle juste apres
-    })
+    });
+
+    module.exports = app;
 
 
-    module.exports = app
 
-
-Et le :file:`server.js`
+Et le :file:`app.js`
 
 .. code-block:: js
 
-    app = require('./app.js')
+    app = require('./router.js')
 
     port = 8080
     app.listen(port);
-    console.log("c'est parti: http://localhost:" + port.toString())
+    console.log("Appli lancée: http://localhost:" + port.toString())
+
+
+
+Formulaire
+========
+
+Requête POST
+^^^^^^^^^^^^
+
+Le formulaire html renvoie par défaut une requête POST si on a les arguments suivants.
+
+.. code-block:: html
+
+    <form ... method="post">
+        <input ... />
+        <input ... />
+        <button type="submit"> Submit </button>
+    </form>
+
+.. note:: Comme elle renvoit déjà cette requête, nous n'aurons pas à gérer son code JS. Ce qu'il reste à faire cependant, c'est traiter cette requête.
+
+
+Package BodyParser
+^^^^^^^^^^^^^^^^^^
+
+Le package BodyParser permet de récupérer les données entrées dans les input du formulaire et de les retranscrire en JavaScript dans une ArrayList, ayant pour argument les noms des input du formulaire.
+
+Installons BodyParser :
+
+:code:`npm install body-parser --save`
+
+Puis dans :file:`router.js` ajoutons :
+
+.. code-block:: js
+
+    var bodyParser = require('body-parser');
+    var urlencodedParser = bodyParser.urlencoded({extended:false});
+
+Ainsi que notre fonction qui va récupérer la requête POST.
+
+.. code-block:: js
+
+    //fonction POST
+    app.post('/',urlencodedParser, function(req,res)
+    {
+        DataBase.push(req.body);
+        res.render('index',{liste: DataBase});
+    });
+
+Enfin, définissons le code html correctement pour que le body-parser renvoit la bonne ArrayList.
+
+.. code-block:: html
+
+    <form style="display: flex;justify-content: space-around" method="post">
+        <input type="text" name="item" class="form-control" placeholder="Nouvel Element" required/>
+        <input type="text" name="price" class="form-control" placeholder="Prix" required/>
+        <button type="submit" class="btn btn-success" style="margin-left: 2%">Ajouter</button>
+    </form>
+
+.. todo:: Essayer de comprendre cette dernière partie et faire fonctionner le formulaire pour ajouter des éléments à notre liste de Noël.
+
+.. note:: Vous trouverez la solution dans le `tag: v.1.3` si vous êtes bloqués.
+
+
+Suppression d'élément
+=====================
+
+Admettons que le budget du Père Noël ait été réduit cette année et que malheureusement il ne pourra pas nous offrir la Ferrari cette année.
+Nous devons donc supprimer cet élément de notre liste, ou recommencer tout depuis le début.
+Nous n'irons pas trop dans le détail sur ces parties-là parce qu'il s'agit principalement de JavaScript, ce qui n'est pas l'objet de cet exercice.
+
+Partie Requête
+^^^^^^^^^^^^^^
+
+Nous avons vu que la requête POST du formulaire n'avait pas besoin d'être créée, ce n'est pas le cas des requêtes DELETE.
+Créeons un fichier :file:`actions.js` dans nos assets dans lequel nous mettrons le code suivant :
+
+.. code-block:: js
+
+    // Suppression d'un élément
+    function deleteOne(item) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", "/" + item, true);
+        xhttp.send();
+        location.replace('/');
+    }
+
+    // Suppression de tous les éléments
+    function deleteAll() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", "/", true);
+        xhttp.send();
+        location.replace('/');
+    }
+
+.. note:: Ce code est code AJAX, vous pourrez trouver plus d'infos à ce sujet ici : https://www.w3schools.com/xml/ajax_intro.asp
+
+
+Appel depuis l'interface
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Maintenant que nos fonctions de requêtes sont en place, il faut pouvoir les appeler depuis notre interface, ce que l'on va pouvoir faire avec l'argument `onclick` de nos boutons.
+
+.. todo:: Modifier les boutons de notre application pour qu'ils puissent appeler ces commandes.
+
+Par la suite, pour que l'interface puisse atteindre les fonctions `deleteOne()` et `deleteAll()`, il faudra implémenter le script de :file:`actions.js` en ajoutant cette ligne dans le `<head>`
+
+.. code-block:: html
+
+    <script type="text/javascript" src="../static/actions.js"></script>
+
+
+Partie Réponse
+^^^^^^^^^^^^^^
+
+Comme pour la requête POST, l'application doit récupérer ces requêtes et les traiter.
+Nous allons les ajouter comme tel dans :file:`router.js` :
+
+.. code-block:: js
+
+    //fonctions DELETE
+    app.delete('/',function (req,res) {
+        DataBase.splice(0,DataBase.length);
+        res.render('index',{liste: DataBase});
+    });
+
+    app.delete('/:item',function (req,res) {
+        for (i=0;i<DataBase.length;i++){
+            if(DataBase[i].item === req.params.item){
+                DataBase.splice(i,1);
+            }
+        }
+        res.render('index',{liste: DataBase});
+    });
+
+.. note:: La fonction `splice(x,y,...)` est une fonction d'ArrayList permettant de retirer y éléments à partir de l'index x et de les remplacer par '...', en prenant en compte les changements potentiels d'index. C'est magique !
+
+.. todo:: Si tout s'est bien passé jusqu'ici, nous avons enfin une liste de cadeaux de Noël fonctionnelle ! Et n'hésitez pas à essayer de comprendre les fonctions utilisées.
+
+.. note:: Vous trouverez la correction dans le :code:`tag: v.1.4`
+
+
+Pour aller plus loin
+====================
+
+* On pourra imaginer que le Père Noël en lisant cette liste, ait besoin du détail de chaque cadeau souhaité. Dans notre appli on pourrait ajouter la possibilité d'afficher le détail d'un cadeau. (Réponse: :code:`tag: v.1.5`)
+* On pourra également à terme remplacer notre `ArrayList DataBase` par une vraie Base de données. Ainsi notre appli déjà programmée est en soi une bonne base pour de la gestion d'inventaire par exemple...
+
+.. note:: Je conseille le tutoriel de NetNinja, qui propose de réaliser une application similaire (une to-do-list) en incluant une Base de Données MongoDB : https://www.youtube.com/playlist?list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp
