@@ -1,558 +1,192 @@
-**************
-ejs : partials
-**************
+*******************
+Ejs et les partials
+*******************
 
-5. Templates
-=========
+*Comment générer des pages HTML sur mesure avec des requêtes post et le moteur de templating EJS*
 
-Générer des fichiers HTML spécifiques pour chaque requête. Pour cela on a du choix : http://expressjs.com/en/guide/using-template-engines.html et on utilisera http://ejs.co :
+.. toctree::
+    :maxdepth: 2
 
-Il faut commencer par l'installer et le mettre en dépendance : :code:`yarn add ejs`
+    2_4_ejs_partials
+
+1. Créer les templates
+======================
+
+.. _EJS: http://ejs.co
+
+Dans ce cours nous vous allez apprendre à générer des fichiers HTML spécifiques pour chaque requête. On utilisera pour
+cela le moteur de template EJS_.
+
+.. note:: On reprendra le projet précédent. Vous pouvez le retrouver au tag :code:`2_serveur_express`
+    Si vous voulez récupérer le projet fini de cette parti, rendez-vous au tag :code:`3_ejs_template`
+    lien du git : [mettre lien]
+
+Commençons par installer EJS et le mettre en dépendance : :code:`yarn add ejs`.
+
+On le défini ensuite dans app.js :
 
 .. code-block:: javascript
+    :caption: app.js
 
     app.set('view engine', 'ejs')
 
+Réorganisons un peu notre projet. Le but est de transformer nos fichiers HTML en templates :
+    * Renommez nos fichiers .html en .ejs
+    * Placez les dans un répertoire :code:`\views` à la racine. EJS saura ainsi où les trouver
 
-Commençons par transformer nos fichiers HTML en templates :
-    * Les templates se trouvent par défaut dans le répertoire :code:`views`.
-    * On renomme nos fichiers .html en .ejs,
-    * On utilise la méthode de rendu plutôt que de charger directement les fichiers : https://www.npmjs.com/package/ejs.
+Par défault, désormais, prenez l'habitude d'organiser vos fichiers sous une architecture MVC : Model - Views - controler
+
+    * Dans le repertoire :code:`\model`, mettez y les fichiers qui gèrent les données du site (pour l'instant vous n'en avezpas rencontré, ais vous comprendrez l'interet de ce fichier lorsque nous aborderont les bases de données
+    * Dans le repertoire :code:`\views`, mettez y tous vos templates
+    * Dans le repertoire :code:`\controler`, on y met les fonctions JavaScript qui assurent le fonctionnement du site. (pour l'instant il contient notre fonctin tuuuut
+
+A cette architecture on pourra bien évidement y ajouter un dosier :code:`\static` pour les images et les fichiers CSS.
+
+Avec EJS, on peut alors simplifier completement l'écriture des routes :
 
 .. code-block:: javascript
 
-    var http = require('http')
+    app.get("/contact", (request, response) =>{
 
-    var express = require('express')
-    var app = express()
+        response.writeHead(200,  {'Content-Type': 'text/html'});
+        var readStream = fs.createReadStream(__dirname + "/assets/contact.html", "utf8");
+        readStream.pipe(response)
 
-	app.set('view engine', 'ejs')
+        });
 
-    app.use("/static", express.static(__dirname + '/static'))
+    app.use( (req, res, next) =>{
+       res.status(404).sendFile((__dirname + "/assets/404.html"))
+    });
+
+Devient alors
+
+.. code-block:: javascript
 
 	app.get('/', (request, response) => {
-	        response.render("index")
-	})
-
-	app.get('/contact', (request, response) => {
-	    response.render("contact")
-	})
+	   response.render("index")
+	});
 
     app.use(function (req, res, next) {
         res.status(404).render("404")
     })
 
-    app.listen(3000);
-    console.log("c'est parti")
+On n'a d'ailleurs plus besoin du module :code:`fs`.
+Remplacez ainsi les appels des routes :code:`/`, :code:`/contact` et :code:`404`,
+
+2. Passage de paramètres
+========================
+
+L'un des nombreux interets d'EJS, c'est qu'on peut lui faire passer des information via des requetes POST, ou directement par l'URL
 
 
-passage de paramètres
----------------------
 
-.. todo:: Passage de paramètres
+Je vous propose de créer une nouvelle route :code:`profile` qui vous dira bonjour avec votre prénom.
+Commencez par créer la route (une route dans app.js, un lien dans index.ejs, et un nouveau template profile.ejs)
 
+.. code-block:: html
+    :caption: index.ejs
 
-partials
---------
+    <li><a href="/profile/Brucker">Page de profil</a></li>
 
+.. code-block:: javascript
+    :caption: profile.ejs
 
-Ajoutons maintenant un élément qui va être sur toutes les pages :
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <title>404</title>
+
+        <style>
+            html, body {
+                margin:0;
+                padding:0;
+
+                background: skyblue;
+                color: #FFFFFF;
+                font-size: 2em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+    <h1>Bonjour <%= personne%></h1>
+
+    </body>
+    </html>
+
+.. code-block:: javascript
+    :caption: app.js
+
+    app.get("/profile/:name", (request, response) =>{
+        response.render("profile", {personne : request.param.name});
+    });
+
+Vous pouvez multiplier les donnés envoyées :
+
+.. code-block:: javascript
+    :caption: app.js
+
+    app.get("/profile/:name", (request, response) =>{
+        var data = {age : 23, profession : 'étudiant'};
+        response.render("profile", {personne : request.param.name, data:data});
+    });
+
+De cette manière, le moteur EJS, envoie des données au template :code:`profile`. Le fichier { var1 : valeur1, var2: valeur2}
+est un fichier JSON, c'est une manière de stocker des informations simplement.
+
+Regardez le résultat de votre travail, vous pouvez être fier de vous.
+
+3. Partials
+===========
+
+EJS permet également de stocker un bout de code, qui sera inséré dans toutes les pages. Ou dans plusieurs pages qui
+doivent afficher le même contenu.
+
+Essayons de créer ensemble une barre de navigation qui devra apparaitre dans les 4 templates que vous avez normalement créés.
+(404, contact, index, profile)
+
     * On crée une navbar toute simple, que l'on place dans un sous-répertoire de :code:`views`,  :code:`partials`,
-    * On l'inclut dans nos templates en ajoutant dans notre fichier ejs la ligne :code:`<% include partials/navbar.ejs %>` Ici, cela pourra être la première ligne du body.
+    * On l'inclut dans nos templates en ajoutant dans notre fichier ejs la ligne :code:`<%- include ('partials/nav.ejs') %>`. Ici, cela pourra être la première ligne du body.
 
 
 .. code-block:: html
     :caption: navbar.ejs
 
 	<style>
-	    nav > ul {
-	        font-size: .5em;
-	        text-align: left;
-	    }
-		nav > ul > li {
-			display: inline;
+        nav > ul {
+            font-size: .5em;
+            text-align: center;
+        }
+        nav > ul > li {
+            display: inline;
 
-		}
-	</style>
+        }
+    </style>
 
-	<nav>
-	  <ul>
-	  	<li><a href="/">Maison</a></li>
-	    <li><a href="/contact">contact</a></li>
-	  </ul>
-	</nav>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/profile/Brucker">Profil</a></li>
+            <li><a href="/hello_world">Hello word</a></li>
+            <li><a href="/bienvenue">Bienvenue</a></li>
+            <li><a href="/tuut">Tuuuut</a></li>
+            <li><a href="/gutenberg">Gutenberg</a></li>
+            <li><a href="/n-importe-quoi">404</a></li>
+        </ul>
+    </nav>
 
 
+4. build
+=========
 
-
-
-build
-=====
-
-Placez votre code sur l'ovh.
+Pour la dernière étape de ce cours, mettez votre premier serveur en production sur l'ovh !
+pour cela, utilisez git
 
 .. note:: On fera attention aux fichiers statiques. Où doivent-ils être ?
 
 
 
+.. note:: quelques ressources supplémentaires :
 
-On recommence un petit site avec ce qu'on a appris la dernière fois. On ajoute juste un formulaire pour mettre son nom, son prénom et permettre d'envoyer un petit compliment aux créateurs du site.
-
-#. :code:`npm init` (on va appeler notre fichier de départ *server*),
-#. :code:`npm install express --save`,
-#. :code:`npm install ejs --save`,
-#. création des dossiers annexes:
-
-  * :file:`assets` pour les fichiers statiques. On y met une image pour les 404 appelée :file:`404.jpg` (prenez par exemple l'image de `<https://fr.wikipedia.org/wiki/Peugeot_404>`_)
-  * :file:`views` pour les vues (avec le template *ejs*) et créez le dossier :file:`partials` dans celui-ci.
-
-
-On doit obtenir l'architecture de dossiers suivante (en utilisant la commande tree qu'il faut peut-être installer d'abord), sans regarder les sous dossiers de :file:`node_modules` (d'où la commande :code:`grep`) :
-
-.. code-block:: sh 
-
-  port-mac-brucker:app fbrucker$ tree -f | grep -v "node_modules/.*"
-  .
-  ├── ./assets
-  │   └── ./assets/404.jpg
-  ├── ./node_modules
-  ├── ./package-lock.json
-  ├── ./package.json
-  └── ./views
-      └── ./views/partials
-
-
-
-server.js
-^^^^^^^^^
-
-C'est la base du serveur :
-
-.. code-block:: javascript
-
-  var express = require('express')
-  var app = express()
-
-  app.set('view engine', 'ejs')
-
-  app.use("/static", express.static(__dirname + '/assets'))
-
-
-  app.listen(8080);
-  console.log("c'est parti");
-
-
-Regardons si ça marche... On peut aller sur `<http://localhost:8080>`_ et voir si notre assets fonctionne :
-`<http://localhost:8080/static/404.jpg>`_
-
-.. note :: on a dissocié les URL (static) du dossier effectif (./assets/) 
-
-
-404.ejs
-^^^^^^^
-
-
-On commence par gérer les 404, puis on rajoutera toutes les autres routes au-dessus de celle-ci.
-
-On place notre :file:`404.ejs` :
-
-
-.. code-block:: html
-
-  <html>
-      <head>
-          <meta charset="utf-8" />
-          <title>404</title>
-
-          <style>
-              img {
-                  display: block;
-                  width: 580px;
-                  height: 419px;
-                  margin: auto;
-              }
-          </style>
-      </head>
-      <body>
-          <h1>Oooops !</h1>
-          <img src="/static/404.jpg" />
-      </body>
-  </html>
-
-
-Et on ajoute la route dans le :file:`server.js` (à la toute fin, juste avant le lancement de l'appli. Si on a rien trouvé avant, c'est que c'est un 404) :
-
-.. code-block:: javascript
-
-  // 404 aucune interception
-  app.use(function (req, res, next) {
-        res.status(404).render("404")
-  })
-
-
-On peut le vérifier avec Chrome et les outils de développement (on doit voir le status 404 dans l'onglet *network*. N'oubliez pas d'actualiser la page pour que l'onglet *network* fonctionne).
-
-
-main.css
-^^^^^^^^ 
-
-L'architecture générale fonctionne, on va commencer notre premier nettoyage : séparer HTML et style pour que l'on puisse facilement s'y retrouver plus tard (aucun css dans les html). Ici :
-
-* On chargera un fichier :file:`main.css` contenant les caractéristiques générales d'une image,
-* On spécifiera la taille de l'image voulue dans la balise img.
-
-
-Ce qui donne l'ajout de la ligne suivante dans le header de :file:`404.ejs` : 
-
-.. code-block:: html
-
-  <html>
-      <head>
-          <meta charset="utf-8" />
-          <title>404</title>
-
-          <link rel="stylesheet" type="text/css" href="/static/main.css">
-      </head>
-      <body>
-          <h1>Oooops !</h1>
-          <img src="/static/404.jpg" width="580px" height="419px" />
-      </body>
-  </html>
-          
-
-Et dans le :file:`main.css` on a ajouté, outre le comportement général d'une image (block et centré), les marges des balises body et html.
-
-
-.. code-block:: css 
-
-  html, body {
-    margin:0;
-    padding:0;
-
-    background: skyblue;
-    color: #FFFFFF;
-    font-size: 2em;
-  }
-
-  img {
-    display: block;
-    margin: auto;
-  }
-
-
-home.ejs
-^^^^^^^^
-
-On ajoute maintenant notre première page, le home (ou la fame).
-
-On va mettre les éléments dans le répertoire :file:`views`. On commence par ajouter la route à :file:`server.js` (avant la route par défaut qui est le 404) :
-
-.. code-block:: javascript
-
-  app.get('/', (request, response) => {
-          response.render("home")
-  })
-
-
-
-
-Puis on crée notre vue :file:`home.ejs` dans le répertoire :file:`views`.
-
-.. code-block:: html
-
-  <html>
-      <head>
-          <meta charset="utf-8" />
-          <title>Maison page</title>
-
-          <link rel="stylesheet" type="text/css" href="/static/main.css">
-      </head>
-
-      <body>
-          <h1>Le site</h1>
-          <p>Il va y avoir des données (plein).</p>
-      </body>
-  </html>
-
-
-
-Navbar
-======
-
-Ajout de `<http://materializecss.com>`_ pour que ce soit plus joli ! Par exemple la navbar : `<http://materializecss.com/navbar.html>`_
-
-.. note :: on peut faire plein de trucs chouette avec materialize ! Mais c'est encore très (trop) instable. Pour une solution (très) stable vous pouvez aussi regarder du côté de `<http://getbootstrap.com>`_ (qui à l'heure que je tape ces lignes est en beta de la v4) (et qui à l'heure où je corrige ces lignes, en est à la v4 tout court)
-
-
-
-
-On va installer ces bibliothèques dans :file:`assets` puisque ce sont des dépendances front. On crée donc un nouveau projet npm pour gérer les dépendances front, et on y ajoute nos bibliothèques.
-
-.. code-block:: sh
-
-  emma:app $ cd assets
-  emma:assets $ npm init
-  emma:assets $ npm install materialize-css --save
-
-On peut maintenant importer la bibliothèque dans :file:`home.ejs` : 
-
-.. code-block:: html
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Maison page</title>
-
-      <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-      />
-
-      <link rel="stylesheet" type="text/css" href="/static/main.css">
-  </head>
-
-  <body>
-      <nav>
-          <div class="nav-wrapper">
-              <a href="/" class="brand-logo left">Da site</a>
-              <ul id="nav-mobile" class="right">
-                  <li>
-                      <a href="commentaires">Commentaires</a>
-                  </li>
-              </ul>
-          </div>
-      </nav>
-
-      <h1>Le site</h1>
-      <p>Il va y avoir des données (plein).</p>
-
-      <!--Import jQuery before materialize.js-->
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-  </body>
-
-  </html>
-
-
-Commentaires (placeholders)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
-
-La navbar contient un lien vers une route "commentaires". On placera notre formulaire là-bas plus tard. Pour l'instant, faisons juste en sorte que la route soit reconnue. 
-
-On ajoute ainsi la route dans :file:`server.js`, juste après la route "/" et avant le "404".
-
-.. code-block:: javascript
-
-  app.get('/commentaires', (request, response) => {
-      response.render("commentaires")
-  })
-
-Et le fichier :file:`commentaires.ejs` :
-
-.. code-block:: html
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Commentaires</title>
-
-      <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <!--Import materialize.css-->
-      <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-      />
-
-      <link rel="stylesheet" type="text/css" href="/static/main.css">
-  </head>
-
-  <body>
-
-      <nav>
-          <div class="nav-wrapper">
-              <a href="/" class="brand-logo left">Da site</a>
-              <ul id="nav-mobile" class="right">
-                  <li>
-                      <a href="commentaires">Commentaires</a>
-                  </li>
-              </ul>
-          </div>
-      </nav>
-
-      <ul>
-          <li>Si j'ai quoi ? affirmatif.</li> 
-          <li>Et quoi d'autre ? No comment.</li>
-      </ul>
-
-      <!--Import jQuery before materialize.js-->
-      <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-      <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-  </body>
-
-  </html>
-
-
-.. note :: on voit que les listes n'ont pas de puces. En regardant les propriétés css, on voit que c'est materialize qui a modifié leur comportement.  C'est pourquoi l'ordre des import des fichiers css et js est important. 
-
-
-Les partials
-============ 
-
-On a dupliqué du code (la navbar et les imports). C'est très dangereux. Pour corriger cela, on va utiliser des partials qui seront importés depuis le dossier :file:`views/partials`
-
-Vous allez faire 3 partials : 
-
-  * :file:`navbar.ejs`
-  * :file:`head_imports.ejs`
-  * :file:`js_imports.ejs`
-
-Ils seront placés dans tous les ejs à part le 404 qui est spécial (il ne fait PAS partie du site).
-
-
-:file:`views/partials/navbar.ejs` :
-
-.. code-block:: html
-
-  <nav>
-      <div class="nav-wrapper">
-          <a href="/" class="brand-logo left">Da site</a>
-          <ul id="nav-mobile" class="right">
-              <li>
-                  <a href="commentaires">Commentaires</a>
-              </li>
-          </ul>
-      </div>
-  </nav>
-
-
-:file:`views/partials/head_css_import.ejs` :
-
-.. code-block:: html
-
-  <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="/static/node_modules/materialize-css/dist/css/materialize.min.css" media="screen,projection"
-  />
-
-  <link rel="stylesheet" type="text/css" href="/static/main.css">
-
-
-:file:`views/partials/js_import.ejs` :
-
-.. code-block:: html
-
-  <!--Import jQuery before materialize.js-->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="/static/node_modules/materialize-css/dist/js/materialize.min.js"></script>
-
-
-Ce qui donne pour :file:`home.ejs` :
-
-.. code-block:: text
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Maison page</title>
-      <% include partials/head_css_import.ejs %>
-  </head>
-
-  <body>
-      <% include partials/navbar.ejs %>
-
-      <h1>Le site</h1>
-      <p>Il va y avoir des données (plein).</p>
-
-      <% include partials/js_import.ejs %>
-  </body>
-
-  </html>
-
-
-et pour :file:`commentaires.ejs` :
-
-.. code-block:: text
-
-  <html>
-
-  <head>
-      <meta charset="utf-8" />
-      <title>Commentaires</title>
-
-      <% include partials/head_css_import.ejs %>
-  </head>
-
-  <body>
-
-      <% include partials/navbar.ejs %>
-
-      <ul>
-          <li>Si j'ai quoi ? affirmatif.</li>
-          <li>Et quoi d'autre ? No comment.</li>
-      </ul>
-
-      <% include partials/js_import.ejs %>
-  </body>
-
-  </html>
-
-
-Refactor
-========
-
-
-Refactor en séparant les routes du serveur
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-En informatique, on aime bien bien séparer le code en unité fonctionnelles, de préférence dans de petits fichiers.
-
-Ici, on va séparer ce qui est de l'ordre de la création du serveur et les routes qu'il peut prendre (pour l'instant on a peu de routes, mais cela augmente généralement très vite).
-
-.. note :: cela va aussi nous permettre de voir comment javascript gère les modules.  `<https://www.sitepoint.com/understanding-module-exports-exports-node-js/>`_
-
-
-On crée un fichier :file:`app.js` contenant nos routes :
-
-.. code-block:: js
-
-    var express = require('express')
-    var app = express()
-
-    app.set('view engine', 'ejs')
-
-
-    app.use("/static", express.static(__dirname + '/assets'))
-
-
-    app.get('/', (request, response) => {
-        response.render("home")
-    })
-
-    app.get('/commentaires', (request, response) => {
-        response.render("commentaires")
-    })
-
-
-    // 404 aucune interception
-    app.use(function (req, res, next) {
-        res.status(404).render("404")
-        // logger.info("404 for: " + req.originalUrl); Le logger n'a pas ete defini, on en parle juste apres
-    })
-
-
-    module.exports = app
-
-
-Et le :file:`server.js`
-
-.. code-block:: js
-
-    app = require('./app.js')
-
-    port = 8080
-    app.listen(port);
-    console.log("c'est parti: http://localhost:" + port.toString())
+        * la doc d'EJS : http://expressjs.com/en/guide/using-template-engines.html

@@ -24,6 +24,7 @@ Pour récupérer le projet complet de cette partie : :code:`git checkout 2_serve
 
 Pour installer les packages Node, on peut utiliser npm_ (node package manager). Aujourd'hui il existe des alternatives,
 comme  :code:`yarn`, par exemple, que nous allons utiliser ici.
+
     * Sous W10 : :code:`scoop install yarn`
     * Sous linux : :code:`apt-get yarn`
     * Sous OSX : :code:`brew install node`
@@ -262,7 +263,7 @@ Je vous laisse créer la page :code:`404.html` dans le dossier assets
 ======================
 
 Pour pouvoir utiliser des fichiers statics (images, feuilles css ...), Express a besoin de savoir où est-ce que vous les rangez.
-créons donc une route :code:`\contact`. Vous devrez donc créer :
+Créons donc une route :code:`\contact`. Vous devrez donc créer :
 
     * La route avec la méthode get dans le fichier app.js
     * Le fichier contact.html dans le fichier assets
@@ -307,6 +308,7 @@ Dans un répertoire :code:`static`, ajoutez une image. Remplaçons le lien vers 
 l'image que vous venez d'importer.
 
 .. code-block:: html
+
     <img src="/static/contact-us.png" />
 
 Et ça ne marche plus... On a un 404. C'est parce que notre serveur ne répond qu'à nos requêtes, pas aux fichiers réels.
