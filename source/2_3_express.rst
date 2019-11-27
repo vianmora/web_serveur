@@ -16,9 +16,25 @@ Express
 .. _Express.js : http://expressjs.com
 
 Node vient souvent avec `Express.js_`, un framework permettant d'en tirer le meilleur parti. On va améliorer le site
-que nous réalisé dans la dernière partie. Vous pouvez le récupérer sur le git au tag :code:`1_premier_serveur`.
+que nous réalisé dans la dernière partie.
 
-Pour récupérer le projet complet de cette partie : :code:`git checkout 2_serveur_express`
+.. note:: Durant ce cours, nous allons créer un petit serveur tout simple pour envoyer à l'utilisateur des pages html.
+    Nous allons tout créer étape par étape. Si vous êtes perdu à un moment, vous pouvez récupérer le projet sur mon repo, et vous rendre au
+    tag indiqué au début de chaque cours. Bien sur, l'idée c'est que vous le fassiez par vous même, le repo ne devrait vous servir
+    que de correction !
+
+    lien de mon git : https://github.com/vianmora/DFS_project_exemple
+
+    Pour ce cours, le projet complet se trouve au tag :code:`2_serveur_express`
+    Pour récupérer le projet de la dernière fois, rendez-vous au tag :code:`1_premier_serveur`.
+
+    un simple ":code:`git checkout [tag]`" dans la console vous renverra à l'étape du tag indiqué.
+
+    Bon apprentissage !!
+
+
+Pour récupérer le projet complet de cette partie : :code:`git checkout`
+
 
 .. _npm : https://www.npmjs.com
 

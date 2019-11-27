@@ -46,7 +46,7 @@ Node en console
 
 .. _JavaScript V8: https://fr.wikipedia.org/wiki/V8_(moteur_JavaScript)
 
-Node peut être vu comme un interpréteur javascript. Il incorpore le moteur _`JavaScript V8` de google
+Node peut être vu comme un interpréteur javascript. Il incorpore le moteur `JavaScript V8`_ de google
 
 Tapez :code:`Node` dans un terminal. Vous vous retrouverez dans un interpréteur javascript. Idéal pour tester des
 commandes et apprendre justement le JavaScript.
@@ -55,11 +55,15 @@ commandes et apprendre justement le JavaScript.
 =========================
 
 .. note:: Durant ce cours, nous allons créer un petit serveur tout simple pour envoyer à l'utilisateur des pages html.
-    Vous pourrez retrouver le fichier complet sur le repo de mon cours au tag :code:`1_premier_serveur`
+    Nous allons tout créer étape par étape. Si vous êtes perdu à un moment, vous pouvez récupérer le projet sur mon repo, et vous rendre au
+    tag indiqué au début de chaque cours. Bien sur, l'idée c'est que vous le fassiez par vous même, le repo ne devrait vous servir
+    que de correction !
 
-    lien de mon git :
+    lien de mon git : https://github.com/vianmora/DFS_project_exemple
 
-    un simple ":code:`git checkout tag`" dans la console vous renverra à l'étape du tag indiqué.
+    Pour ce cours, le projet complet se trouve au tag :code:`1_premier_serveur`
+
+    un simple ":code:`git checkout [tag]`" dans la console vous renverra à l'étape du tag indiqué.
 
     Bon apprentissage !!
 
@@ -201,9 +205,9 @@ Enregistrez votre travail dans un github. Nous récupererons les fichiers avec l
 configuration du serveur
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. _Serveur Ngnix :https://www.nginx.com/
+.. _Ngnix : https://www.nginx.com/
 
-On a un `Serveur Ngnix`_ qui tourne.
+On a un Serveur Ngnix_ qui tourne.
 
 son boulot :
     * lire les requête et les envoyer au bon endroit (port)
@@ -221,6 +225,7 @@ exécuter node
 ^^^^^^^^^^^^^^
 
 Si vous lancez :code:`node premieres_routes.js` dans ce repertoire, vous retrouverez votre serveur à l'adresse
+
 http://node.[herbe_de_provence].ovh1.ec-m.fr/
 
 Le problème c'est que si vous quittez le terminal, node s'arrète également et votre serveur n'est plus accesible. Voyons comment faire
@@ -239,10 +244,11 @@ screen manual : https://linuxize.com/post/how-to-use-linux-screen/
 * :code:`screen -ls` : trouve les différents screen
 * :code:`screen -X -S [session # you want to kill] quit` : tue le screen
 
+.. note:: pour connaître les process en cours sur votre machine, on utilise la commande :code:`ps aux`.
+    Comme il y en a beaucoup, on peut les filtrer avec la commande :code:`grep`
 
-.. todo:: faire un speech sur les ps et kill
-
-:code:`ps aux| grep raifort` puis kill (sans -9) le numéro du process (le 1er numéro)
+Ainsi, la commande : :code:`ps aux| grep raifort` sélectionne les process auxiliaires dont le nom contient raifort. ça tombe bien
+c'est celui que l'on veut récupérer. Voyez, il reste actif, même après fermeture de session.
 
 
 4. Quelques notions de JavaScript

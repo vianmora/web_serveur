@@ -17,9 +17,19 @@ Ejs et les partials
 Dans ce cours nous vous allez apprendre à générer des fichiers HTML spécifiques pour chaque requête. On utilisera pour
 cela le moteur de template EJS_.
 
-.. note:: On reprendra le projet précédent. Vous pouvez le retrouver au tag :code:`2_serveur_express`
-    Si vous voulez récupérer le projet fini de cette parti, rendez-vous au tag :code:`3_ejs_template`
-    lien du git : [mettre lien]
+.. note:: Si vous êtes perdu à un moment, vous pouvez récupérer le projet sur mon repo, et vous rendre au
+    tag indiqué au début de chaque cours. Bien sur, l'idée c'est que vous le fassiez par vous même, le repo ne devrait vous servir
+    que de correction !
+
+    lien de mon git : https://github.com/vianmora/DFS_project_exemple
+
+    Pour ce cours, le projet complet se trouve au tag :code:`3_ejs_template`
+    Pour récupérer le projet de la dernière fois, rendez-vous au tag :code:`2_serveur_express`.
+
+    un simple ":code:`git checkout [tag]`" dans la console vous renverra à l'étape du tag indiqué.
+
+    Bon apprentissage !!
+
 
 Commençons par installer EJS et le mettre en dépendance : :code:`yarn add ejs`.
 
@@ -181,10 +191,15 @@ Essayons de créer ensemble une barre de navigation qui devra apparaitre dans le
 =========
 
 Pour la dernière étape de ce cours, mettez votre premier serveur en production sur l'ovh !
-pour cela, utilisez git
+
+Je vous invite donc à mettre un peu de style dans votre projet avec bootstrap (comme au tag :code:`4_avec_bootstrap`)
+
+Avant de charger vos donnés sur le site!
+
 
 .. note:: On fera attention aux fichiers statiques. Où doivent-ils être ?
 
+Bravo, si vous êtes arrivé là, vous avez compris les fondamentaux de Node. Prêt pour en faire un peu plus ?
 
 
 .. note:: quelques ressources supplémentaires :

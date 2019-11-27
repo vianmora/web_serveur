@@ -10,11 +10,11 @@ Projet Liste de Noël
     3_0_Projet_liste_noël
 
 
-Présentation du projet
+1. Présentation du projet
 ======================
 C'est bientôt Noël ! Il faut donc faire sa liste de cadeaux ! Créons donc une appli qui nous permettra de compléter cette liste !
 
-.. note:: Retrouvez la correction pas-à-pas sur ce repository: https://github.com/pisabel-git/Liste_de_Noel
+.. note:: Retrouvez la correction pas-à-pas sur ce repository: https://github.com/pisabel-git/Liste-de-Noel
 
 #. :code:`npm init` (on va appeler notre fichier de départ *app*),
 #. :code:`npm install express --save`,
@@ -161,7 +161,7 @@ Et dans le :file:`main.css` on a ajouté, outre le comportement général d'une 
 
 
 index.ejs
-^^^^^^^^
+^^^^^^^^^^
 
 On ajoute maintenant notre première page, le home (ou la fame).
 
@@ -196,10 +196,10 @@ der
 
 .. todo :: L'appli est initialisée ! Nous allons pouvoir commencer à créer notre Liste au Père Noël. Si vous avez des soucis avec l'installation, jetez un coup d'oeil au :code:`tag: v.0` du repository
 
-Liste Dynamique
-======
+2. Listes dynamiques
+===================
 
-Remplacons le code de `main.css`
+Remplaçons le code de `main.css`
 
 .. code-block:: css
 
@@ -282,8 +282,8 @@ Il faut ensuite inclure la base de données dans la fonction GET('/') pour l'inc
 .. note:: Vous trouverez la solution dans le `tag: v.1.1`
 
 
-Les partials
-============
+3. Les partials
+===============
 
 Avec cette manière de faire nous avons simplifié le code de l'index. Seulement, si nous souhaitons créer des composants plus complexes, le code va rapidement devenir lourd.
 Pour éviter cela, on va utiliser un partials, qui sera notre composant "type", élément de la liste: :file:`item.ejs`
@@ -302,8 +302,8 @@ Dans `index.ejs`, on utilisera la nomenclature suivante :
 .. note:: Vous trouverez la solution dans le `tag: v.1.2`
 
 
-Refactor
-========
+4. Refactor
+============
 
 Refactor en séparant les routes du serveur
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -357,8 +357,8 @@ Et le :file:`app.js`
 
 
 
-Formulaire
-========
+5. Formulaire
+==============
 
 Requête POST
 ^^^^^^^^^^^^
@@ -418,8 +418,8 @@ Enfin, définissons le code html correctement pour que le body-parser renvoit la
 .. note:: Vous trouverez la solution dans le `tag: v.1.3` si vous êtes bloqués.
 
 
-Suppression d'élément
-=====================
+5. Suppression d'élément
+=========================
 
 Admettons que le budget du Père Noël ait été réduit cette année et que malheureusement il ne pourra pas nous offrir la Ferrari cette année.
 Nous devons donc supprimer cet élément de notre liste, ou recommencer tout depuis le début.
@@ -502,4 +502,5 @@ Pour aller plus loin
 * On pourra imaginer que le Père Noël en lisant cette liste, ait besoin du détail de chaque cadeau souhaité. Dans notre appli on pourrait ajouter la possibilité d'afficher le détail d'un cadeau. (Réponse: :code:`tag: v.1.5`)
 * On pourra également à terme remplacer notre `ArrayList DataBase` par une vraie Base de données. Ainsi notre appli déjà programmée est en soi une bonne base pour de la gestion d'inventaire par exemple...
 
-.. note:: Je conseille le tutoriel de NetNinja, qui propose de réaliser une application similaire (une to-do-list) en incluant une Base de Données MongoDB : https://www.youtube.com/playlist?list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp
+.. note:: Je conseille le tutoriel de NetNinja, qui propose de réaliser une application similaire (une to-do-list) en
+    incluant une Base de Données MongoDB : https://www.youtube.com/playlist?list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp
